@@ -1,7 +1,6 @@
 const { getAllCategory, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../model/category')
 const helper = require('../helper/index.js');
-const { response, request } = require('express');
-const { getProductById } = require('../model/product');
+const { response } = require('express');
 
 module.exports = {
     getAllCategory: async (request, response) => {
