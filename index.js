@@ -1,14 +1,23 @@
+require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const routerNavigation = require('./src')
+const routerNavigation = require('./src');
+const cors = require('cors')
 
 // const { response, request } = require("express");
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(morgan("dev"))
+app.use((request, response, next) => {
+    response.header("Access-Control-Allow-Origin", "*")
+    response.header("Access-Control-Allow-Headers", "Origin, X-Request-With, Content-Type, Accept, Authorization")
+    next()
+})
+
 
 app.use('/', routerNavigation)
 
