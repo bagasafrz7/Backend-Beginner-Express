@@ -10,13 +10,13 @@ module.exports = {
             })
         })
     },
-    postOrder: (setData) => {
+    postOrder: (setDataOrder) => {
         return new Promise((resolve, reject) => {
-            connection.query("INSERT INTO orders set ?", setData, (error, result) => {
+            connection.query("INSERT INTO orders set ?", setDataOrder, (error, result) => {
                 if (!error) {
                     const newResult = {
                         orders_id: result.insertId,
-                        ...setData
+                        ...setDataOrder
                     }
                     resolve(newResult)
                 } else {
