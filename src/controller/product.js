@@ -1,4 +1,4 @@
-const { getProduct, getProductCount, getProductById, postProduct, patchProduct, deleteProduct } = require('../model/product')
+const { getAllProduct, getProduct, getProductByName, getProductCount, getProductCountByName, getProductById, postProduct, patchProduct, deleteProduct } = require('../model/product')
 const qs = require('querystring')
 const helper = require('../helper/index.js');
 const { response } = require('express');
@@ -27,41 +27,69 @@ const getNextLink = (page, totalPage, currentQuery) => {
     }
 }
 
-
-// const searchName = (search) => {
-//     if (search === null) {
-
-//     } else {
-
-//     }
-// }
 module.exports = {
     getAllProduct: async (request, response) => {
-        let { page, limit, search, sort } = request.query
-        page = parseInt(page)
-        limit = parseInt(limit)
-        // console.log(sort)
-        let totalData = await getProductCount()
+        let { page, limit, sort } = request.query
+
+        if (page === undefined || page === '') {
+            page = 1
+        } else {
+            page = parseInt(page)
+        }
+
+        if (limit === undefined || limit === '') {
+            limit = 9
+        } else {
+            limit = parseInt(limit)
+        }
+
+
+        if (sort === undefined || sort === '') {
+            sort = 'product_id'
+        }
+
+        let totalData = await getProductCount();
         let totalPage = Math.ceil(totalData / limit)
         let offSide = page * limit - limit
         let prevLink = getPrevLink(page, request.query)
         let nextLink = getNextLink(page, totalPage, request.query)
         const pageInfo = {
-            page, //page: page
+            page, // page: page
             totalPage,
             limit,
             totalData,
-            prevLink: prevLink && `http://127.0.0.1:3001/product/${prevLink}`,
-            nextLink: prevLink && `http://127.0.0.1:3001/product/${nextLink}`
+            prevLink: prevLink && `http://127.0.0.1:3001/product?${prevLink}`, nextLink: nextLink && `http://127.0.0.1:3001/product?${nextLink}`
         }
         try {
-            const result = await getProduct(search, sort, limit, offSide);
-            return helper.response(response, 200, "Success Get Product", result, pageInfo)
+            const result = await getProduct(sort, limit, offSide);
+            if (result.length > 0) {
+                return helper.response(response, 200, "Success Get Product", result, pageInfo)
+            } else {
+                return helper.response(response, 404, "Product Not Foud", result, pageInfo)
+            }
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)
         }
     },
-
+    getProductByName: async (request, response) => {
+        let { search } = request.query
+        let limit = 50
+        let totalData = await getProductCountByName(search)
+        try {
+            const resultSearch = await getProductByName(search, limit)
+            const result = {
+                resultSearch,
+                totalData
+            }
+            if (resultSearch.length > 0) {
+                return helper.response(response, 200, "Success Get Product By Name", result)
+            } else {
+                return helper.response(response, 404, `Product By Name: ${search} Not Foud`)
+            }
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
     getProductById: async (request, response) => {
         try {
             // const id = request.params.id
@@ -71,7 +99,7 @@ module.exports = {
                 return helper.response(response, 200, "Success Get Product By Id", result)
                 // console.log(result)
             } else {
-                return helper.response(response, 400, `Product By Id: ${id} Not Foud`)
+                return helper.response(response, 404, `Product By Id: ${id} Not Foud`)
             }
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)

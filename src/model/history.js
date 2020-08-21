@@ -31,9 +31,9 @@ module.exports = {
             })
         })
     },
-    patchHistory: (setData, id) => {
+    patchHistory: (setCheckout, newDataId) => {
         return new Promise((resolve, reject) => {
-            connection.query("UPDATE histories set ? WHERE history_id = ?", [setData, id], (error, result) => {
+            connection.query("UPDATE histories set ? WHERE history_id = ?", [setCheckout, newDataId], (error, result) => {
                 if (!error) {
                     const newResult = {
                         history_id: id,
@@ -46,11 +46,4 @@ module.exports = {
             })
         })
     }
-    // getPriceProduct: () => {
-    //     return new Promise((resolve, reject) => {
-    //         connection.query("SELECT order_qty, order_price FROM orders WHERE history_id = ?", id, (error, result) => {
-    //             !error ? resolve(result) : reject(new Error(error))
-    //         })
-    //     })
-    // }
 }

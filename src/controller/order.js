@@ -1,5 +1,5 @@
 const { getAllOrder, postOrder } = require('../model/order')
-const { postHistory } = require('../model/history')
+const { postHistory, patchHistory } = require('../model/history')
 const helper = require('../helper/index.js');
 const { response } = require('express');
 
@@ -27,11 +27,23 @@ module.exports = {
                     history_id: newDataId,
                     product_id: value.product_id,
                     order_qty: value.order_qty,
-                    order_price: value.order_price
+                    order_price: value.order_price * value.order_qty
                 }
                 const result = postOrder(setDataOrder)
-                return helper.response(response, 201, "Order Created".result)
+                const subTotal = result.order_price
             })
+
+            console.log(newDataRaw.setDataOrder())
+            const taxable = subTotal * 10 / 100
+            const afterTaxable = subTotal + taxable
+
+            // const setCheckout = {
+            //     history_id: newDataId,
+            //     history_subtotal: afterTaxable,
+            //     history_updated_at: new Date()
+            // }
+            // const resultCheckout = await patchHistory(setCheckout, newDataId)
+            // return helper.response(response, 201, "Order Created", resultCheckout)
 
         } catch (error) {
             // return helper.response(response, 400, "Bad Request", error)
