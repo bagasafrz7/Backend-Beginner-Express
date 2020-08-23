@@ -31,9 +31,9 @@ module.exports = {
             })
         })
     },
-    patchHistory: (setCheckout, newDataId) => {
+    patchHistory: (setData, id) => {
         return new Promise((resolve, reject) => {
-            connection.query("UPDATE histories set ? WHERE history_id = ?", [setCheckout, newDataId], (error, result) => {
+            connection.query("UPDATE histories set ? WHERE history_id = ?", [setData, id], (error, result) => {
                 if (!error) {
                     const newResult = {
                         history_id: id,

@@ -22,6 +22,8 @@ module.exports = {
             const result = await postHistory(setData)
             const newDataId = result.history_id
             const dataRaw = request.body.orders
+            // const resultNone = []
+            let subTotal = 0
             const newDataRaw = dataRaw.map((value, index) => {
                 const setDataOrder = {
                     history_id: newDataId,
@@ -29,21 +31,23 @@ module.exports = {
                     order_qty: value.order_qty,
                     order_price: value.order_price * value.order_qty
                 }
-                const result = postOrder(setDataOrder)
-                const subTotal = result.order_price
+                const result2 = postOrder(setDataOrder)
+                subTotal += setDataOrder.order_price
+                return [setDataOrder]
             })
-
-            console.log(newDataRaw.setDataOrder())
+            // console.log(newDataRaw[setDataOrder])
+            // console.log(subTotal)
+            // const subTotal = newDataRaw.order_price
             const taxable = subTotal * 10 / 100
             const afterTaxable = subTotal + taxable
-
-            // const setCheckout = {
-            //     history_id: newDataId,
-            //     history_subtotal: afterTaxable,
-            //     history_updated_at: new Date()
-            // }
-            // const resultCheckout = await patchHistory(setCheckout, newDataId)
-            // return helper.response(response, 201, "Order Created", resultCheckout)
+            const setCheckout = {
+                history_id: newDataId,
+                history_subtotal: afterTaxable,
+                history_updated_at: new Date()
+            }
+            console.log(setCheckout)
+            const resultCheckout = await patchHistory(setCheckout, newDataId)
+            return helper.response(response, 201, "Order Created", resultCheckout)
 
         } catch (error) {
             // return helper.response(response, 400, "Bad Request", error)
