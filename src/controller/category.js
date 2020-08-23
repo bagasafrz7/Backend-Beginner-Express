@@ -27,6 +27,15 @@ module.exports = {
     postCategory: async (request, response) => {
         try {
             const { category_name, category_status } = request.body
+
+            if (category_name === '') {
+                return helper.response(response, 400, "Category Name Cannot Be Empty")
+            }
+
+            if (category_status === '') {
+                return helper.response(response, 400, "Category Status Cannot Be Empty")
+            }
+
             const setData = {
                 category_name,
                 category_created_at: new Date(),
@@ -42,6 +51,15 @@ module.exports = {
         try {
             const { id } = request.params
             const { category_name, category_status } = request.body
+
+            if (category_name === '') {
+                return helper.response(response, 400, "Category Name Cannot Be Empty")
+            }
+
+            if (category_status === '') {
+                return helper.response(response, 400, "Category Status Cannot Be Empty")
+            }
+
             const setData = {
                 category_name,
                 category_updated_at: new Date(),

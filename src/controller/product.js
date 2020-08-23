@@ -109,6 +109,27 @@ module.exports = {
     postProduct: async (request, response) => {
         try {
             const { category_id, product_name, product_harga, product_image, product_status } = request.body
+
+            if (category_id === '') {
+                return helper.response(response, 400, "Category ID Cannot Be Empty")
+            }
+
+            if (product_name === '') {
+                return helper.response(response, 400, "Product Name Cannot Be Empty")
+            }
+
+            if (product_harga === '') {
+                return helper.response(response, 400, "Product Price Cannot Be Empty")
+            }
+
+            if (product_image === '') {
+                return helper.response(response, 400, "Product Image Cannot Be Empty")
+            }
+
+            if (product_status === '') {
+                return helper.response(response, 400, "Product Status Cannot Be Empty")
+            }
+
             const setData = {
                 category_id,
                 product_name,
@@ -136,6 +157,27 @@ module.exports = {
         try {
             const { id } = request.params
             const { category_id, product_name, product_harga, product_image, product_status } = request.body
+
+            if (category_id === '') {
+                return helper.response(response, 400, "Category ID Cannot Be Empty")
+            }
+
+            if (product_name === '') {
+                return helper.response(response, 400, "Product Name Cannot Be Empty")
+            }
+
+            if (product_harga === '') {
+                return helper.response(response, 400, "Product Price Cannot Be Empty")
+            }
+
+            if (product_image === '') {
+                return helper.response(response, 400, "Product Image Cannot Be Empty")
+            }
+
+            if (product_status === '') {
+                return helper.response(response, 400, "Product Status Cannot Be Empty")
+            }
+
             const setData = {
                 category_id,
                 product_name,
