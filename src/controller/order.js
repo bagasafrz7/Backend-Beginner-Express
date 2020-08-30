@@ -13,6 +13,7 @@ module.exports = {
         }
     },
     postOrder: async (request, response) => {
+        // console.log(request.body)
         try {
             const setData = {
                 history_invoice: (Math.floor(Math.random() * 10000) + 10000),
@@ -47,11 +48,13 @@ module.exports = {
             }
             console.log(setCheckout)
             const resultCheckout = await patchHistory(setCheckout, newDataId)
-            return helper.response(response, 201, "Order Created", resultCheckout)
-
+            // Manggil model get Order by history_id
+            // const resultOrderID = await getOrderID(newDataId)
+            const setResult = { invoice: setData.history_invoice, history_id: newDataId, subTotal: afterTaxable, ppn: taxable, total: subTotal }
+            return helper.response(response, 201, "Order Created", setResult)
         } catch (error) {
-            // return helper.response(response, 400, "Bad Request", error)
-            console.log(error)
+            return helper.response(response, 400, "Bad Request", error)
+            // console.log(error)
         }
     }
 }

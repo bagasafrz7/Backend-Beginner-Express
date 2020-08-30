@@ -37,6 +37,27 @@ module.exports = {
             })
         })
     },
+    getOrdersDays: () => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT histories.history_id, histories.history_invoice, histories.history_created_at, orders.order_id, product.product_name, histories.history_subtotal FROM histories JOIN orders ON histories.history_id = orders.history_id JOIN product ON orders.product_id=product.product_id WHERE DAY(history_created_at) = DAY(NOW())", (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    getOrdersWeek: () => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT histories.history_id, histories.history_invoice, histories.history_created_at, orders.order_id, product.product_name, histories.history_subtotal FROM histories JOIN orders ON histories.history_id = orders.history_id JOIN product ON orders.product_id=product.product_id WHERE WEEK(history_created_at) = WEEK(NOW())", (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    GetOrdersMonth: () => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT histories.history_id, histories.history_invoice, histories.history_created_at, orders.order_id, product.product_name, histories.history_subtotal FROM histories JOIN orders ON histories.history_id = orders.history_id JOIN product ON orders.product_id=product.product_id WHERE MONTH(history_created_at) = MONTH(NOW())", (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
     postHistory: (setData) => {
         return new Promise((resolve, reject) => {
             connection.query("INSERT INTO histories set ?", setData, (error, result) => {

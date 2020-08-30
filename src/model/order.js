@@ -10,6 +10,13 @@ module.exports = {
             })
         })
     },
+    getOrderID: (newDataId) => {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * FROM orders where history_id = ?`, newDataId, (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
     postOrder: (setDataOrder) => {
         return new Promise((resolve, reject) => {
             connection.query("INSERT INTO orders set ?", setDataOrder, (error, result) => {

@@ -1,4 +1,4 @@
-const { getAllHistory, getHistoryById, getHistoryDays, getHistoryWeek, getHistoryYears, postHistory, getPriceProduct, patchHistory } = require('../model/history')
+const { getAllHistory, getHistoryById, getHistoryDays, getHistoryWeek, getHistoryYears, getOrdersDays, getOrdersWeek, GetOrdersMonth, postHistory, getPriceProduct, patchHistory } = require('../model/history')
 const helper = require('../helper/index.js');
 const { response, request } = require('express');
 const { get } = require('../routes/history');
@@ -46,6 +46,30 @@ module.exports = {
         try {
             const result = await getHistoryYears();
             return helper.response(response, 200, "Succes Get History Per Years", result)
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    GetOrdersDays: async (request, response) => {
+        try {
+            const result = await getOrdersDays();
+            return helper.response(response, 200, "Succes Get Orders Per Days", result)
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    GetOrdersWeek: async (request, response) => {
+        try {
+            const result = await getOrdersWeek();
+            return helper.response(response, 200, "Succes Get Orders Per Week", result)
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    GetOrdersMonth: async (request, response) => {
+        try {
+            const result = await GetOrdersMonth();
+            return helper.response(response, 200, "Succes Get Orders Per Month", result)
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)
         }
