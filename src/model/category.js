@@ -1,10 +1,31 @@
 const connection = require('../config/mysql')
 
 module.exports = {
-    getAllCategory: () => {
+    getAllCategory: (sort, limit, offSide) => {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * FROM category`, (error, result) => {
+            connection.query(`SELECT * FROM category ORDER BY ${sort} LIMIT ? OFFSET ?`, [limit, offSide], (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    getCategoryByName: (search, limit) => {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * FROM category WHERE category_name LIKE ? LIMIT ?`, [`%${search}%`, limit], (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    getCategoryCount: () => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT COUNT(*) as total FROM category", (error, result) => {
+                !error ? resolve(result[0].total) : reject(new Error(error))
+            })
+        })
+    },
+    getCategoryCountByName: (search) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT COUNT(*) as total FROM category WHERE category_name LIKE ?', `%${search}`, (error, result) => {
+                !error ? resolve(result[0].total) : reject(new Error(error))
             })
         })
     },

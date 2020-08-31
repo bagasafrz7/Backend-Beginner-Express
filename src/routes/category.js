@@ -1,8 +1,9 @@
 const router = require("express").Router()
-const { getAllCategory, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../controller/category')
+const { getAllCategory, getCategoryByName, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../controller/category')
 
 // GET
 router.get("/", getAllCategory);
+router.get("/search", getCategoryByName)
 router.get("/:id", getCategoryById);
 
 // POST

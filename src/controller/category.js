@@ -1,12 +1,90 @@
-const { getAllCategory, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../model/category')
+const { getAllCategory, getCategoryCount, getCategoryByName, getCategoryCountByName, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../model/category')
+const qs = require('querystring')
 const helper = require('../helper/index.js');
-const { response } = require('express');
+const { response, request } = require('express');
+
+const getPrevLink = (page, currentQuery) => {
+    if (page > 1) {
+        const generatedPage = {
+            page: page - 1
+        }
+        const resultPrevLink = { ...currentQuery, ...generatedPage }
+        return qs.stringify(resultPrevLink)
+    } else {
+        return null
+    }
+}
+
+const getNextLink = (page, totalPage, currentQuery) => {
+    if (page < totalPage) {
+        const generatedPage = {
+            page: page + 1
+        }
+        const resultNextLink = { ...currentQuery, ...generatedPage }
+        return qs.stringify(resultNextLink)
+    } else {
+        return null
+    }
+}
 
 module.exports = {
     getAllCategory: async (request, response) => {
+        let { page, limit, sort } = request.query
+
+        if (page === undefined || page === '') {
+            page = 1
+        } else {
+            page = parseInt(page)
+        }
+
+        if (limit === undefined || limit === '') {
+            limit = 9
+        } else {
+            limit = parseInt(limit)
+        }
+
+        if (sort === undefined || sort === '') {
+            sort = 'category_id'
+        }
+
+        let totalData = await getCategoryCount();
+        let totalPage = Math.ceil(totalData / limit)
+        let offSide = page * limit - limit
+        let prevLink = getPrevLink(page, request.query)
+        let nextLink = getNextLink(page, totalPage, request.query)
+        const pageInfo = {
+            page, // page: page
+            totalPage,
+            limit,
+            totalData,
+            prevLink: prevLink && `http://127.0.0.1:3001/category?${prevLink}`, nextLink: nextLink && `http://127.0.0.1:3001/category?${nextLink}`
+        }
+
         try {
-            const result = await getAllCategory();
-            return helper.response(response, 200, "Success Get Category", result)
+            const result = await getAllCategory(sort, limit, offSide);
+            if (result.length > 0) {
+                return helper.response(response, 200, "Success Get Category", result, pageInfo)
+            } else {
+                return helper.response(response, 404, "Category Not Foud", result, pageInfo)
+            }
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    getCategoryByName: async (request, response) => {
+        let { search } = request.query
+        let limit = 50
+        let totalData = await getCategoryCountByName(search)
+        try {
+            const resultSearch = await getCategoryByName(search, limit)
+            const result = {
+                resultSearch, totalData
+            }
+            if (resultSearch.length > 0) {
+                return helper.response(response, 200, "Success Get Category By Name", result)
+            } else {
+                return helper.response(response, 404, `Category By Name: ${search} Not Foud`)
+            }
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)
         }
