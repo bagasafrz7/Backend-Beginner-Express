@@ -1,3 +1,5 @@
+const redis = require('redis')
+const client = redis.createClient()
 const { getAllProduct, getProduct, getProductByName, getProductCount, getProductCountByName, getProductById, postProduct, patchProduct, deleteProduct } = require('../model/product')
 const qs = require('querystring')
 const helper = require('../helper/index.js');
@@ -62,6 +64,7 @@ module.exports = {
         }
         try {
             const result = await getProduct(sort, limit, offSide);
+            client.set(`getproduct:${JSON.stringify(request.query)}`, JSON.stringify(result)) //selesaikan
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Product", result, pageInfo)
             } else {
@@ -95,6 +98,8 @@ module.exports = {
             // const id = request.params.id
             const { id } = request.params
             const result = await getProductById(id)
+            // proses set data result kedalam redis
+            client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Product By Id", result)
                 // console.log(result)
@@ -130,14 +135,16 @@ module.exports = {
                 return helper.response(response, 400, "Product Status Cannot Be Empty")
             }
 
+            console.log(request.file)
             const setData = {
                 category_id,
                 product_name,
                 product_harga,
-                product_image,
+                product_image: request.file === undefined ? "" : request.file.filename,
                 product_created_at: new Date(),
                 product_status
             }
+            // console.log(setData)
             const result = await postProduct(setData)
             return helper.response(response, 201, "Product Created", result)
         } catch (error) {
