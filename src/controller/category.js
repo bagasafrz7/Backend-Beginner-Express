@@ -2,6 +2,8 @@ const { getAllCategory, getCategoryCount, getCategoryByName, getCategoryCountByN
 const qs = require('querystring')
 const helper = require('../helper/index.js');
 const { response, request } = require('express');
+const redis = require('redis')
+const client = redis.createClient()
 
 const getPrevLink = (page, currentQuery) => {
     if (page > 1) {
@@ -62,6 +64,7 @@ module.exports = {
 
         try {
             const result = await getAllCategory(sort, limit, offSide);
+            client.set(`getcategory:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Category", result, pageInfo)
             } else {
@@ -80,6 +83,7 @@ module.exports = {
             const result = {
                 resultSearch, totalData
             }
+            client.set(`getsearchcategory:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (resultSearch.length > 0) {
                 return helper.response(response, 200, "Success Get Category By Name", result)
             } else {
@@ -93,6 +97,7 @@ module.exports = {
         try {
             const { id } = request.params
             const result = await getCategoryById(id)
+            client.setex(`getcategorybyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Category By Id", result)
             } else {

@@ -3,11 +3,14 @@ const helper = require('../helper/index.js');
 const { response, request } = require('express');
 const { get } = require('../routes/history');
 const { patchCategory } = require('../model/category');
+const redis = require('redis')
+const client = redis.createClient()
 
 module.exports = {
     getAllHistory: async (request, response) => {
         try {
             const result = await getAllHistory();
+            client.set(`getproduct:${JSON.stringify(request.query)}`, JSON.stringify(result))
             return helper.response(response, 200, "Success Get History", result)
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)
@@ -17,6 +20,7 @@ module.exports = {
         try {
             const { id } = request.params
             const result = await getHistoryById(id)
+            client.setex(`gethistorybyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get History By Id", result)
             } else {

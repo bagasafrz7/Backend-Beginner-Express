@@ -84,6 +84,7 @@ module.exports = {
                 resultSearch,
                 totalData
             }
+            client.set(`getsearchproduct:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (resultSearch.length > 0) {
                 return helper.response(response, 200, "Success Get Product By Name", result)
             } else {
