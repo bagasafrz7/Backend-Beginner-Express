@@ -23,5 +23,12 @@ module.exports = {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
+    },
+    cekUserName: (userName) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT user_id, user_email, user_password, user_name, user_role, user_status FROM user WHERE user_name = ?', userName, (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
     }
 }
