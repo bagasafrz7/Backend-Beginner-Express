@@ -1,4 +1,4 @@
-<h1 align="center">ExpressJS - SPACE_POS RESTfull API</h1>
+<h1 align="center">ExpressJS - SPACE RESTfull API</h1>
 
 This is my first backend point of sale project, and will be used in one of my projects, the SPACE POS App. The purpose of this application is to make sales transactions easier, and also easy for anyone to use. Thank you, hopefully useful. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
