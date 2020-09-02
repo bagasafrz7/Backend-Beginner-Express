@@ -49,6 +49,7 @@ DB_HOST=localhost // Database host
 - `/history/:id`(Get History By ID)
 - `/order`(Get All Order)
 - `/order/:id`(Get Order By ID)
+
 **2. POST**
 
 - `/product` (Post Product)
@@ -57,12 +58,14 @@ DB_HOST=localhost // Database host
   - `{ "category_name": Foods, "category_status": 1 | 0}`
 - `/order` (Post Order)
   - `{ "orders": [{"product_id": 11, "order_qty": 3, "order_price": 5000}, {"product_id": 12, "order_qty": "order_price": 10000}] }`
+  
 **3. PATCH**
 
 - `/product/:id` (Update Product by id)
   - `{ "category_id": 2, "product_name": "Ice Cream", "product_harga": 25000, "product_image": "#", "product_status" : 1 | 0}`
 - `/category/:id` (Category Product by id)
   - `{ "category_name": Foods, "category_status": 1 | 0}`
+  
 **4. DELETE**
 
 - `/product/:id` (Delete Product by id)
