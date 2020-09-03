@@ -19,7 +19,7 @@ module.exports = {
         client.get(`getproduct:${JSON.stringify(request.query)}`, (error, result) => {
             if (!error && result != null) {
                 console.log('Data ada didalam redis')
-                return helper.response(response, 200, JSON.parse(result))
+                return helper.response(response, 200, JSON.parse(result).msg, JSON.parse(result).data, JSON.parse(result).pagination)
             } else {
                 console.log('Data tidak ada didalam redis')
                 next()
@@ -93,7 +93,7 @@ module.exports = {
     },
     clearDataRedis: (request, response, next) => {
         client.flushall((error, result) => {
-            console.log(result)
+            !error ? console.log(result) : console.log(error)
         })
         next()
     }

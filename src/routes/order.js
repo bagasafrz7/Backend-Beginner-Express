@@ -1,12 +1,12 @@
 const router = require("express").Router()
 const { getAllOrder, postOrder } = require('../controller/order')
-const { authorization } = require('../middleware/auth')
-const { getOrderRedis } = require('../middleware/redis')
+const { authorizationPublic, authorizationAdmin } = require('../middleware/auth')
+const { getOrderRedis, clearDataRedis } = require('../middleware/redis')
 
 // GET
-router.get("/", authorization, getOrderRedis, getAllOrder);
+router.get("/", authorizationPublic, getOrderRedis, getAllOrder);
 
 // POST
-router.post("/", postOrder);
+router.post("/", authorizationAdmin, clearDataRedis, postOrder);
 
 module.exports = router

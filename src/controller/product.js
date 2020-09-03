@@ -4,6 +4,7 @@ const { getAllProduct, getProduct, getProductByName, getProductCount, getProduct
 const qs = require('querystring')
 const helper = require('../helper/index.js');
 const { response } = require('express');
+const fs = require('fs')
 
 const getPrevLink = (page, currentQuery) => {
     if (page > 1) {
@@ -64,8 +65,13 @@ module.exports = {
         }
         try {
             const result = await getProduct(sort, limit, offSide);
-            client.set(`getproduct:${JSON.stringify(request.query)}`, JSON.stringify(result)) //selesaikan
             if (result.length > 0) {
+                const newResult = {
+                    msg: 'Success Get Product',
+                    data: result,
+                    pagination: pageInfo
+                }
+                client.setex(`getproduct:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newResult))
                 return helper.response(response, 200, "Success Get Product", result, pageInfo)
             } else {
                 return helper.response(response, 404, "Product Not Foud", result, pageInfo)
@@ -190,14 +196,20 @@ module.exports = {
                 category_id,
                 product_name,
                 product_harga,
-                product_image,
+                product_image: request.file === undefined ? "" : request.file.filename,
                 product_updated_at: new Date(),
                 product_status
             }
             const checkId = await getProductById(id)
             if (checkId.length > 0) {
-                const result = await patchProduct(setData, id)
-                return helper.response(response, 201, "Product Updated", result)
+                fs.unlink(`./uploads/${checkId[0].product_image}`, async (error) => {
+                    if (error) {
+                        throw error
+                    } else {
+                        const result = await patchProduct(setData, id)
+                        return helper.response(response, 201, "Product Updated", result)
+                    }
+                })
             } else {
                 return helper.response(response, 400, `Product By Id: ${id} Not Foud`)
             }
@@ -210,8 +222,14 @@ module.exports = {
             const { id } = request.params
             const checkId = await getProductById(id)
             if (checkId.length > 0) {
-                const result = await deleteProduct(id)
-                return helper.response(response, 201, "Product Deleted", result)
+                fs.unlink(`./uploads/${checkId[0].product_image}`, async (error) => {
+                    if (error) {
+                        throw error
+                    } else {
+                        const result = await deleteProduct(id)
+                        return helper.response(response, 201, "Product Deleted", result)
+                    }
+                })
             } else {
                 return helper.response(response, 400, `Product By Id: ${id} Not Foud`)
             }
