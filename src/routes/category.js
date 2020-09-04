@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { getAllCategory, getCategoryByName, getCategoryById, postCategory, patchCategory, deleteCategory } = require('../controller/category')
 const { authorizationPublic, authorizationAdmin } = require('../middleware/auth')
-const { getCategoryByIdRedis, getCategoryRedis, getSearchCategoryRedis, clearDataRedis } = require('../middleware/redis')
+const { getCategoryByIdRedis, getCategoryRedis, getSearchCategoryRedis, clearDataCategory } = require('../middleware/redis')
 const upload = require('../middleware/multer')
 
 // GET
@@ -13,9 +13,9 @@ router.get("/:id", authorizationPublic, getCategoryByIdRedis, getCategoryById);
 router.post("/", authorizationAdmin, postCategory);
 
 // PATCH/PUT
-router.patch("/:id", authorizationAdmin, clearDataRedis, patchCategory);
+router.patch("/:id", authorizationAdmin, clearDataCategory, patchCategory);
 
 // DELETE
-router.delete("/:id", authorizationAdmin, clearDataRedis, deleteCategory);
+router.delete("/:id", authorizationAdmin, clearDataCategory, deleteCategory);
 
 module.exports = router

@@ -66,12 +66,11 @@ module.exports = {
         try {
             const result = await getProduct(sort, limit, offSide);
             if (result.length > 0) {
-                const newResult = {
-                    msg: 'Success Get Product',
-                    data: result,
-                    pagination: pageInfo
+                const newData = {
+                    result,
+                    pageInfo
                 }
-                client.setex(`getproduct:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newResult))
+                client.setex(`getproduct:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newData))
                 return helper.response(response, 200, "Success Get Product", result, pageInfo)
             } else {
                 return helper.response(response, 404, "Product Not Foud", result, pageInfo)
@@ -90,7 +89,7 @@ module.exports = {
                 resultSearch,
                 totalData
             }
-            client.set(`getsearchproduct:${JSON.stringify(request.query)}`, JSON.stringify(result))
+            client.set(`getproductsearch:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (resultSearch.length > 0) {
                 return helper.response(response, 200, "Success Get Product By Name", result)
             } else {
@@ -102,14 +101,12 @@ module.exports = {
     },
     getProductById: async (request, response) => {
         try {
-            // const id = request.params.id
             const { id } = request.params
             const result = await getProductById(id)
             // proses set data result kedalam redis
             client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Product By Id", result)
-                // console.log(result)
             } else {
                 return helper.response(response, 404, `Product By Id: ${id} Not Foud`)
             }
@@ -120,29 +117,7 @@ module.exports = {
     },
     postProduct: async (request, response) => {
         try {
-            const { category_id, product_name, product_harga, product_image, product_status } = request.body
-
-            if (category_id === '') {
-                return helper.response(response, 400, "Category ID Cannot Be Empty")
-            }
-
-            if (product_name === '') {
-                return helper.response(response, 400, "Product Name Cannot Be Empty")
-            }
-
-            if (product_harga === '') {
-                return helper.response(response, 400, "Product Price Cannot Be Empty")
-            }
-
-            if (product_image === '') {
-                return helper.response(response, 400, "Product Image Cannot Be Empty")
-            }
-
-            if (product_status === '') {
-                return helper.response(response, 400, "Product Status Cannot Be Empty")
-            }
-
-            console.log(request.file)
+            const { category_id, product_name, product_harga, product_status } = request.body
             const setData = {
                 category_id,
                 product_name,
@@ -151,26 +126,6 @@ module.exports = {
                 product_created_at: new Date(),
                 product_status
             }
-            // console.log(setData)
-            const result = await postProduct(setData)
-            return helper.response(response, 201, "Product Created", result)
-        } catch (error) {
-            return helper.response(response, 400, "Bad Request", error)
-        }
-        // const setData = {
-        //  Kiri name dari database | Kanan dari postman
-        //     product_name: request.body.product_name,
-        //     product_harga: request.body.product_harga,
-        //     product_created_at: new Date(),
-        //     product_status: request.body.product_status
-        // }
-        // console.log(setData)
-        // response.send('Post Berhasil');
-    },
-    patchProduct: async (request, response) => {
-        try {
-            const { id } = request.params
-            const { category_id, product_name, product_harga, product_image, product_status } = request.body
 
             if (category_id === '') {
                 return helper.response(response, 400, "Category ID Cannot Be Empty")
@@ -184,14 +139,20 @@ module.exports = {
                 return helper.response(response, 400, "Product Price Cannot Be Empty")
             }
 
-            if (product_image === '') {
-                return helper.response(response, 400, "Product Image Cannot Be Empty")
-            }
-
             if (product_status === '') {
                 return helper.response(response, 400, "Product Status Cannot Be Empty")
             }
 
+            const result = await postProduct(setData)
+            return helper.response(response, 201, "Product Created", result)
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    patchProduct: async (request, response) => {
+        try {
+            const { id } = request.params
+            const { category_id, product_name, product_harga, product_status } = request.body
             const setData = {
                 category_id,
                 product_name,
@@ -199,6 +160,21 @@ module.exports = {
                 product_image: request.file === undefined ? "" : request.file.filename,
                 product_updated_at: new Date(),
                 product_status
+            }
+            if (category_id === '') {
+                return helper.response(response, 400, "Category ID Cannot Be Empty")
+            }
+
+            if (product_name === '') {
+                return helper.response(response, 400, "Product Name Cannot Be Empty")
+            }
+
+            if (product_harga === '') {
+                return helper.response(response, 400, "Product Price Cannot Be Empty")
+            }
+
+            if (product_status === '') {
+                return helper.response(response, 400, "Product Status Cannot Be Empty")
             }
             const checkId = await getProductById(id)
             if (checkId.length > 0) {

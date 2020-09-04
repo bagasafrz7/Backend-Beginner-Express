@@ -97,7 +97,7 @@ module.exports = {
         try {
             const { id } = request.params
             const result = await getCategoryById(id)
-            client.setex(`getcategorybyid:${id}`, 3600, JSON.stringify(result))
+            client.setex(`getcategorysearch:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Category By Id", result)
             } else {

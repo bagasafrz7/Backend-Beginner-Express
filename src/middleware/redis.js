@@ -9,7 +9,7 @@ module.exports = {
         const { id } = request.params
         client.get(`getproductbyid:${id}`, (error, result) => {
             if (!error && result != null) {
-                return helper.response(response, 200, JSON.parse(result))
+                return helper.response(response, 200, "Success Get Product By Id", JSON.parse(result))
             } else {
                 next()
             }
@@ -17,22 +17,32 @@ module.exports = {
     },
     getProductRedis: (request, response, next) => {
         client.get(`getproduct:${JSON.stringify(request.query)}`, (error, result) => {
+            const newResult = JSON.parse(result)
             if (!error && result != null) {
-                console.log('Data ada didalam redis')
-                return helper.response(response, 200, JSON.parse(result).msg, JSON.parse(result).data, JSON.parse(result).pagination)
+                return helper.response(response, 200, "Succes Get Data Product", newResult.result, newResult.pageInfo)
             } else {
-                console.log('Data tidak ada didalam redis')
                 next()
             }
         })
     },
     getSearchProductRedis: (request, response, next) => {
-        client.get(`getsearchproduct: ${JSON.stringify(request.query)}`, (error, result) => {
+        client.get(`getproductsearch: ${JSON.stringify(request.query)}`, (error, result) => {
+            const newResult = JSON.parse(result)
             if (!error && result != null) {
-                return helper.response(response, 200, JSON.parse(result))
+                return helper.response(response, 200, "Success Get Product By Name", newResult.resultSearch, newResult.totalData)
             } else {
                 next()
             }
+        })
+    },
+    clearDataProduct: (request, response, next) => {
+        client.keys('getproduct*', (err, keys) => {
+            if (keys.length > 0) {
+                keys.forEach((value) => {
+                    client.del(value)
+                })
+            }
+            next()
         })
     },
     getCategoryByIdRedis: (request, response, next) => {
@@ -55,12 +65,22 @@ module.exports = {
         })
     },
     getSearchCategoryRedis: (request, response, next) => {
-        client.get(`getsearchcategory: ${JSON.stringify(request.query)}`, (error, result) => {
+        client.get(`getcategorysearch: ${JSON.stringify(request.query)}`, (error, result) => {
             if (!error && result != null) {
                 return helper.response(response, 200, JSON.parse(result))
             } else {
                 next()
             }
+        })
+    },
+    clearDataCategory: (request, response, next) => {
+        client.keys('getcategory*', (err, keys) => {
+            if (keys.length > 0) {
+                keys.forEach((value) => {
+                    client.del(value)
+                })
+            }
+            next()
         })
     },
     getOrderRedis: (request, response, next) => {
@@ -70,6 +90,16 @@ module.exports = {
             } else {
                 next()
             }
+        })
+    },
+    clearDataOrder: (request, response, next) => {
+        client.keys('getorder*', (err, keys) => {
+            if (keys.length > 0) {
+                keys.forEach((value) => {
+                    client.del(value)
+                })
+            }
+            next()
         })
     },
     getHistoryByIdRedis: (request, response, next) => {
@@ -91,10 +121,14 @@ module.exports = {
             }
         })
     },
-    clearDataRedis: (request, response, next) => {
-        client.flushall((error, result) => {
-            !error ? console.log(result) : console.log(error)
+    clearDataHistory: (request, response, next) => {
+        client.keys('gethistory*', (err, keys) => {
+            if (keys.length > 0) {
+                keys.forEach((value) => {
+                    client.del(value)
+                })
+            }
+            next()
         })
-        next()
     }
 }

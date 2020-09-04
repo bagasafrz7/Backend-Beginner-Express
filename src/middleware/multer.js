@@ -1,5 +1,6 @@
 const multer = require('multer')
 const path = require('path')
+const helper = require('../helper/index.js');
 
 const storage = multer.diskStorage({
     destination: (request, file, callback) => {
@@ -14,13 +15,27 @@ const storage = multer.diskStorage({
 const fileFilter = (request, file, callback) => {
     const ext = path.extname(file.originalname)
     if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
-        return callback(new Error('Only images are allowed'))
+        return callback(new Error('Extension File Must be PNG, JPG or JPEG'))
     }
     callback(null, true)
 }
 
-const maxSize = 1024 * 1024
+const limits = { fileSize: 1024 * 1024 * 1 }
 
-let upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: maxSize } })
+let upload = multer({ storage: storage, fileFilter: fileFilter, limits: limits }).single('product_image')
 
-module.exports = upload
+const uploadFilter = (request, response, next) => {
+    upload(request, response, function (err) {
+        if (err instanceof multer.MulterError) {
+            // A Multer error occurred when uploading.
+            return helper.response(response, 400, err.message)
+        } else if (err) {
+            // An unknown error occurred when uploading.
+            return helper.response(response, 400, err.message)
+        }
+        next()
+        // Everything went fine.
+    })
+}
+
+module.exports = uploadFilter
