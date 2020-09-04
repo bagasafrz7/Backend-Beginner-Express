@@ -64,8 +64,12 @@ module.exports = {
 
         try {
             const result = await getAllCategory(sort, limit, offSide);
-            client.set(`getcategory:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (result.length > 0) {
+                const newData = {
+                    result,
+                    pageInfo
+                }
+                client.setex(`getcategory:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newData))
                 return helper.response(response, 200, "Success Get Category", result, pageInfo)
             } else {
                 return helper.response(response, 404, "Category Not Foud", result, pageInfo)
@@ -83,7 +87,7 @@ module.exports = {
             const result = {
                 resultSearch, totalData
             }
-            client.set(`getsearchcategory:${JSON.stringify(request.query)}`, JSON.stringify(result))
+            client.set(`getcategorysearch:${JSON.stringify(request.query)}`, JSON.stringify(result))
             if (resultSearch.length > 0) {
                 return helper.response(response, 200, "Success Get Category By Name", result)
             } else {
@@ -97,7 +101,7 @@ module.exports = {
         try {
             const { id } = request.params
             const result = await getCategoryById(id)
-            client.setex(`getcategorysearch:${id}`, 3600, JSON.stringify(result))
+            client.setex(`getcategorybyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Category By Id", result)
             } else {

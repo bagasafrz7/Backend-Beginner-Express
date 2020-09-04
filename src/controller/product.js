@@ -84,13 +84,13 @@ module.exports = {
         let limit = 50
         let totalData = await getProductCountByName(search)
         try {
-            const resultSearch = await getProductByName(search, limit)
-            const result = {
-                resultSearch,
-                totalData
-            }
-            client.set(`getproductsearch:${JSON.stringify(request.query)}`, JSON.stringify(result))
-            if (resultSearch.length > 0) {
+            const result = await getProductByName(search, limit)
+            if (result.length > 0) {
+                const newData = {
+                    result,
+                    totalData
+                }
+                client.setex(`getproductsearch:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newData))
                 return helper.response(response, 200, "Success Get Product By Name", result)
             } else {
                 return helper.response(response, 404, `Product By Name: ${search} Not Foud`)

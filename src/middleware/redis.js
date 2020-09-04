@@ -29,7 +29,7 @@ module.exports = {
         client.get(`getproductsearch: ${JSON.stringify(request.query)}`, (error, result) => {
             const newResult = JSON.parse(result)
             if (!error && result != null) {
-                return helper.response(response, 200, "Success Get Product By Name", newResult.resultSearch, newResult.totalData)
+                return helper.response(response, 200, "Success Get Product By Name", newResult.result, newResult.totalPage)
             } else {
                 next()
             }
@@ -57,8 +57,9 @@ module.exports = {
     },
     getCategoryRedis: (request, response, next) => {
         client.get(`getcategory:${JSON.stringify(request.query)}`, (error, result) => {
+            const newResult = JSON.parse(result)
             if (!error && result != null) {
-                return helper.response(response, 200, JSON.parse(result))
+                return helper.response(response, 200, "Success Get Category", newResult.result, newResult.pageInfo)
             } else {
                 next()
             }
