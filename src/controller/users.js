@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
 const helper = require('../helper/index')
-const { postUser, cekUser } = require('../model/users')
+const { postUser, cekUser, getUserById, patchUser } = require('../model/users')
 const jwt = require('jsonwebtoken')
-const { response } = require('express')
+const { response, request } = require('express')
 
 module.exports = {
     registerUser: async (request, response) => {
@@ -76,5 +76,34 @@ module.exports = {
             return helper.response(response, 400, "Bad Request!")
         }
 
+    },
+    patchUser: async (request, response) => {
+        try {
+            const { id } = request.params
+            const { user_name, user_status } = request.body
+
+            if (user_name === '') {
+                return helper.response(response, 400, "Username Cannot Be Empety")
+            }
+
+            if (user_status === '') {
+                return helper.response(response, 400, "User Status Cannot Be Empety")
+            }
+
+            const setData = {
+                user_name,
+                user_status,
+                user_updated_at: new Date()
+            }
+            const checkId = await getUserById(id)
+            if (checkId.length > 0) {
+                const result = await patchUser(setData, id)
+                return helper.response(response, 200, "Users Updated", result)
+            } else {
+                return helper.response(response, 400, `User By Id: ${id} Not Foud`)
+            }
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
     }
 }

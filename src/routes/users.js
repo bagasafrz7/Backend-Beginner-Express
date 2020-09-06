@@ -1,7 +1,8 @@
 const router = require('express').Router()
-const { registerUser, loginUser } = require('../controller/users')
+const { registerUser, loginUser, patchUser } = require('../controller/users')
+const { authorizationAdmin } = require('../middleware/auth')
 
 router.post('/register', registerUser)
 router.get('/login', loginUser)
-
+router.patch('/:id', authorizationAdmin, patchUser)
 module.exports = router
