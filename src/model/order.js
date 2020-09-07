@@ -5,8 +5,6 @@ module.exports = {
         return new Promise((resolve, reject) => {
             connection.query(`SELECT histories.history_id, histories.history_invoice, histories.history_created_at, orders.order_id, product.product_name, histories.history_subtotal FROM histories JOIN orders ON histories.history_id = orders.history_id JOIN product ON orders.product_id=product.product_id`, (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
-                // console.log(result)
-                // console.log(error)
             })
         })
     },

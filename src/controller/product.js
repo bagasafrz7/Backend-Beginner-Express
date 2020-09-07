@@ -57,7 +57,7 @@ module.exports = {
         let prevLink = getPrevLink(page, request.query)
         let nextLink = getNextLink(page, totalPage, request.query)
         const pageInfo = {
-            page, // page: page
+            page,
             totalPage,
             limit,
             totalData,
@@ -103,7 +103,6 @@ module.exports = {
         try {
             const { id } = request.params
             const result = await getProductById(id)
-            // proses set data result kedalam redis
             client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result))
             if (result.length > 0) {
                 return helper.response(response, 200, "Success Get Product By Id", result)

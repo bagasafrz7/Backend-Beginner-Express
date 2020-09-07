@@ -9,7 +9,6 @@ module.exports = {
         const { user_email, user_password, user_name } = request.body
         const salt = bcrypt.genSaltSync(10)
         const encryptPassword = bcrypt.hashSync(user_password, salt)
-        // console.log('user password Bcrypt = ' + encryptPassword)
         const setData = {
             user_email,
             user_password: encryptPassword,
@@ -43,14 +42,10 @@ module.exports = {
     loginUser: async (request, response) => {
         try {
             const { user_email, user_password } = request.body
-            // console.log(user_email)
             const cekDataUser = await cekUser(user_email)
-            console.log(cekDataUser)
             if (cekDataUser.length >= 1) {
-                // proses 2
                 const cekPassword = bcrypt.compareSync(user_password, cekDataUser[0].user_password)
                 if (cekPassword) {
-                    // proses 3 = set JWT
                     const { user_id, user_email, user_name, user_role, user_status } = cekDataUser[0]
                     let payload = {
                         user_id,

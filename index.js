@@ -5,7 +5,6 @@ const morgan = require('morgan');
 const routerNavigation = require('./src');
 const cors = require('cors')
 
-// const { response, request } = require("express");
 const app = express();
 
 app.use(cors());

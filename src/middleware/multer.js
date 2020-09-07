@@ -7,7 +7,6 @@ const storage = multer.diskStorage({
         callback(null, './uploads/')
     },
     filename: (request, file, callback) => {
-        // console.log(file)
         callback(null, file.fieldname + '-' + new Date().toISOString().replace(/:/g, '-') + "-" + file.originalname)
     }
 })
@@ -27,14 +26,11 @@ let upload = multer({ storage: storage, fileFilter: fileFilter, limits: limits }
 const uploadFilter = (request, response, next) => {
     upload(request, response, function (err) {
         if (err instanceof multer.MulterError) {
-            // A Multer error occurred when uploading.
             return helper.response(response, 400, err.message)
         } else if (err) {
-            // An unknown error occurred when uploading.
             return helper.response(response, 400, err.message)
         }
         next()
-        // Everything went fine.
     })
 }
 

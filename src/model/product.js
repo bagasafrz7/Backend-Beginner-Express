@@ -5,7 +5,6 @@ module.exports = {
         return new Promise((resolve, reject) => {
             connection.query(`SELECT * FROM product ORDER BY ${sort} LIMIT ? OFFSET ?`, [limit, offSide], (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
-                // console.log(error)
             })
         })
     },
