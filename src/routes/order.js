@@ -7,6 +7,6 @@ const { getOrderRedis, clearDataOrder } = require('../middleware/redis')
 router.get("/", authorizationPublic, getOrderRedis, getAllOrder);
 
 // POST
-router.post("/", authorizationAdmin, clearDataOrder, postOrder);
+router.post("/", authorizationPublic, clearDataOrder, postOrder);
 
 module.exports = router

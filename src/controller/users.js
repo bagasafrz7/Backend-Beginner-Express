@@ -80,7 +80,15 @@ module.exports = {
     patchUser: async (request, response) => {
         try {
             const { id } = request.params
-            const { user_name, user_status } = request.body
+            const { user_email, user_password, user_name, user_status } = request.body
+
+            if (user_email === '') {
+                return helper.response(response, 400, "Email Cannot Be Empety")
+            }
+
+            if (user_password.length < 8) {
+                return helper.response(response, 400, "Password Must Be More Than 8 Characters")
+            }
 
             if (user_name === '') {
                 return helper.response(response, 400, "Username Cannot Be Empety")
@@ -90,7 +98,11 @@ module.exports = {
                 return helper.response(response, 400, "User Status Cannot Be Empety")
             }
 
+            const salt = bcrypt.genSaltSync(10)
+            const encryptPassword = bcrypt.hashSync(user_password, salt)
             const setData = {
+                user_email,
+                user_password: encryptPassword,
                 user_name,
                 user_status,
                 user_updated_at: new Date()
