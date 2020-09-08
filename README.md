@@ -22,7 +22,7 @@ This is my first backend point of sale project, and will be used in one of my pr
 4. Turn on Web Server and MySQL can using Third-party tool like xampp, etc.
 5. Create a database with the name #nama_database, and Import file sql to **phpmyadmin**
 6. Open Postman desktop application or Chrome web app extension that has installed before
-7. Choose HTTP Method and enter request url.(ex. localhost:3000/)
+7. Choose HTTP Method and enter request url.(ex. localhost:3001/)
 8. You can see all the end point [here](#end-point)
 
 ## Set up .env file
@@ -30,7 +30,10 @@ This is my first backend point of sale project, and will be used in one of my pr
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-DB_HOST=localhost // Database host
+DB_HOST=localhost // Database Host
+DB_USER=root // Database Root
+DB_PASS=// Database Password
+DB_NAME=online_shop // Database Name
 ```
 
 ## End Point
@@ -58,16 +61,27 @@ DB_HOST=localhost // Database host
   - `{ "category_name": Foods, "category_status": 1 | 0}`
 - `/order` (Post Order)
   - `{ "orders": [{"product_id": 11, "order_qty": 3, "order_price": 5000}, {"product_id": 12, "order_qty": "order_price": 10000}] }`
+- `/users/register` (Register New User)
+  - `{ "user_email": "user@gmail.com", "user_password": "user112233", "user_name": "User"}`
+- `/users/login` (Sign in)
+  - `{ "user_email": "admin@gmail.com", "user_password": "12345678"}`
   
 **3. PATCH**
 
 - `/product/:id` (Update Product by id)
   - `{ "category_id": 2, "product_name": "Ice Cream", "product_harga": 25000, "product_image": "#", "product_status" : 1 | 0}`
-- `/category/:id` (Category Product by id)
+- `/category/:id` (Update Category by id)
   - `{ "category_name": Foods, "category_status": 1 | 0}`
+- `/users/:id` (Update Users Users Status by id)
+  - `{ "user_email": "user@gmail.com", "user_password": "user112233", "user_name": "User", "user_status": 1}`
   
 **4. DELETE**
 
 - `/product/:id` (Delete Product by id)
 - `/category/:id` (Delete Category by id)
+
+**5. Documentation API**
+
+https://web.postman.co/collections/12353337-9b876826-2dc7-4a89-af8e-295fda40512b?version=latest&workspace=e23183f9-0134-41bf-8a77-b51e1037f49e
+
 # Backend-Beginner-Express
