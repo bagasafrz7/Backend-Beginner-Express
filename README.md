@@ -34,6 +34,9 @@ DB_HOST=localhost // Database Host
 DB_USER=root // Database Root
 DB_PASS=// Database Password
 DB_NAME=online_shop // Database Name
+
+PORT=3001 //PORT
+IP=127.0.0.1 // IP
 ```
 
 ## End Point
@@ -84,4 +87,3 @@ DB_NAME=online_shop // Database Name
 
 https://web.postman.co/collections/12353337-9b876826-2dc7-4a89-af8e-295fda40512b?version=latest&workspace=e23183f9-0134-41bf-8a77-b51e1037f49e
 
-# Backend-Beginner-Express
