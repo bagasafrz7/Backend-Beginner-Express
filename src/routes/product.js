@@ -10,7 +10,7 @@ router.get("/search", authorizationPublic, getSearchProductRedis, getProductByNa
 router.get("/:id", authorizationPublic, getProductByIdRedis, getProductById);
 
 // [POST]
-router.post("/", authorizationAdmin, uploadImage, postProduct);
+router.post("/", authorizationAdmin, uploadImage, clearDataProduct, postProduct);
 
 // [PATCH/PUT]
 router.patch("/:id", authorizationAdmin, uploadImage, clearDataProduct, patchProduct);

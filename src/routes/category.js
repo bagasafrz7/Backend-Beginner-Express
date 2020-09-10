@@ -10,7 +10,7 @@ router.get("/search", authorizationPublic, getSearchCategoryRedis, getCategoryBy
 router.get("/:id", authorizationPublic, getCategoryByIdRedis, getCategoryById);
 
 // POST
-router.post("/", authorizationAdmin, postCategory);
+router.post("/", authorizationAdmin, clearDataCategory, postCategory);
 
 // PATCH/PUT
 router.patch("/:id", authorizationAdmin, clearDataCategory, patchCategory);
