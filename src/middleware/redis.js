@@ -131,5 +131,24 @@ module.exports = {
             }
             next()
         })
-    }
+    },
+    getUserRedis: (request, response, next) => {
+        client.get(`getuser:${JSON.stringify(request.query)}`, (error, result) => {
+            if (!error && result != null) {
+                return helper.response(response, 200, JSON.parse(result))
+            } else {
+                next()
+            }
+        })
+    },
+    clearDataUser: (request, response, next) => {
+        client.keys('getuser*', (err, keys) => {
+            if (keys.length > 0) {
+                keys.forEach((value) => {
+                    client.del(value)
+                })
+            }
+            next()
+        })
+    },
 }

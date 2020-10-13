@@ -1,4 +1,5 @@
 const connection = require('../config/mysql')
+const { request, response } = require('express')
 
 module.exports = {
     postUser: (setData) => {
@@ -31,6 +32,20 @@ module.exports = {
             })
         })
     },
+    getAllUser: (sort, limit, offSide) => {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * FROM user ORDER BY ${sort} LIMIT ? OFFSET ?`, [limit, offSide], (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    getUserCount: () => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT COUNT(*) as total FROM user", (error, result) => {
+                !error ? resolve(result[0].total) : reject(new Error(error))
+            })
+        })
+    },
     getUserById: (id) => {
         return new Promise((resolve, reject) => {
             connection.query("SELECT * FROM user WHERE user_id = ?", id, (error, result) => {
@@ -45,6 +60,20 @@ module.exports = {
                     const newResult = {
                         user_id: id,
                         ...setData
+                    }
+                    resolve(newResult)
+                } else {
+                    reject(new Error(error))
+                }
+            })
+        })
+    },
+    deleteUser: (id) => {
+        return new Promise((resolve, reject) => {
+            connection.query("DELETE FROM user where user_id = ?", id, (error, result) => {
+                if (!error) {
+                    const newResult = {
+                        id: id
                     }
                     resolve(newResult)
                 } else {

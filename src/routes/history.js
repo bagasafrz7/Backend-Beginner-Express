@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { getAllHistory, getHistoryById, GetHistoryDays, GetHistoryWeek, GetHistoryYears, GetOrdersDays, GetOrdersWeek, GetOrdersMonth, postHistory, patchHistory } = require('../controller/history');
+const { getAllHistory, getHistoryById, GetHistoryDays, GetHistoryWeek, GetHistoryYears, GetOrdersDays, GetOrdersWeek, GetOrdersMonth, postHistory, patchHistory, getDailyMonth, dataChart } = require('../controller/history');
 const { authorizationPublic, authorizationAdmin } = require('../middleware/auth')
 const { getHistoryByIdRedis, getHistoryRedis, clearDataHistory } = require('../middleware/redis')
 
@@ -11,6 +11,8 @@ router.get("/years", GetHistoryYears);
 router.get("/orders/days", GetOrdersDays);
 router.get("/orders/weeks", GetOrdersWeek);
 router.get("/orders/month", GetOrdersMonth);
+router.get("/chart", dataChart)
+router.post("/income/month", getDailyMonth)
 router.get("/:id", authorizationPublic, getHistoryByIdRedis, getHistoryById);
 
 // POST

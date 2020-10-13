@@ -1,4 +1,4 @@
-const { getAllHistory, getHistoryById, getHistoryDays, getHistoryWeek, getHistoryYears, getOrdersDays, getOrdersWeek, GetOrdersMonth, postHistory, getPriceProduct, patchHistory } = require('../model/history')
+const { getAllHistory, getHistoryById, getHistoryDays, getHistoryWeek, getHistoryYears, getOrdersDays, getOrdersWeek, GetOrdersMonth, postHistory, getPriceProduct, patchHistory, chartModel } = require('../model/history')
 const helper = require('../helper/index.js');
 const { response, request } = require('express');
 const { get } = require('../routes/history');
@@ -110,6 +110,31 @@ module.exports = {
             }
         } catch (error) {
             return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    getDailyMonth: async (request, response) => {
+        try {
+            const today = request.body.date;
+            let result = []
+            for (let i = 30; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const date = d.toISOString().slice(0, 10);
+                const income = await getDailyToday(date);
+                result = [...result, { date: date, income: income }];
+            }
+            return helper.response(response, 200, "Success GET Data Daily Month Month", result);
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error);
+        }
+    },
+    dataChart: async (request, response) => {
+        try {
+            const result = await chartModel();
+            return helper.response(response, 200, "Success Get Data for Chart", result);
+        } catch (error) {
+            // console.log(err);
+            return helper.response(response, 404, "Bad request", error);
         }
     }
 }

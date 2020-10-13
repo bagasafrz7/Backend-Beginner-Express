@@ -86,5 +86,24 @@ module.exports = {
                 }
             })
         })
+    },
+    getDailyToday: (date) => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `SELECT SUM(history_subtotal) as daily_income, DATE(history_created_at) as date FROM histories WHERE DATE(history_created_at) = "${date}" GROUP BY DATE(history_created_at)`, (error, result) => {
+                    !error ? resolve(result) : reject(new Error(error));
+                }
+            )
+        })
+    },
+    chartModel: () => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `SELECT DATE(history_created_at) as date, SUM(history_subtotal) as total FROM histories WHERE MONTH(history_created_at) = MONTH(NOW()) AND YEAR(history_created_at) = YEAR(NOW()) GROUP BY DATE(history_created_at)`,
+                (err, data) => {
+                    !err ? resolve(data) : reject(new Error(err));
+                }
+            )
+        })
     }
 }

@@ -1,8 +1,33 @@
 const bcrypt = require('bcrypt')
 const helper = require('../helper/index')
-const { postUser, cekUser, getUserById, patchUser } = require('../model/users')
+const { postUser, cekUser, getUserById, getAllUser, getUserCount, patchUser, deleteUser } = require('../model/users')
 const jwt = require('jsonwebtoken')
 const { response, request } = require('express')
+const qs = require('querystring')
+
+const getPrevLink = (page, currentQuery) => {
+    if (page > 1) {
+        const generatedPage = {
+            page: page - 1
+        }
+        const resultPrevLink = { ...currentQuery, ...generatedPage }
+        return qs.stringify(resultPrevLink)
+    } else {
+        return null
+    }
+}
+
+const getNextLink = (page, totalPage, currentQuery) => {
+    if (page < totalPage) {
+        const generatedPage = {
+            page: page + 1
+        }
+        const resultNextLink = { ...currentQuery, ...generatedPage }
+        return qs.stringify(resultNextLink)
+    } else {
+        return null
+    }
+}
 
 module.exports = {
     registerUser: async (request, response) => {
@@ -72,6 +97,54 @@ module.exports = {
         }
 
     },
+    getUser: async (request, response) => {
+        let { page, limit, sort } = request.query
+
+        if (page === undefined || page === '') {
+            page = 1
+        } else {
+            page = parseInt(page)
+        }
+
+        if (limit === undefined || limit === '') {
+            limit = 20
+        } else {
+            limit = parseInt(limit)
+        }
+
+        if (sort === undefined || sort === '') {
+            sort = 'user_id'
+        }
+
+        let totalData = await getUserCount();
+        let totalPage = Math.ceil(totalData / limit)
+        let offSide = page * limit - limit
+        let prevLink = getPrevLink(page, request.query)
+        let nextLink = getNextLink(page, totalPage, request.query)
+        const pageInfo = {
+            page,
+            totalPage,
+            limit,
+            totalData,
+            prevLink: prevLink && `http://127.0.0.1:3001/user?${prevLink}`, nextLink: nextLink && `http://127.0.0.1:3001/user?${nextLink}`
+        }
+
+        try {
+            const result = await getAllUser(sort, limit, offSide)
+            if (result.length > 0) {
+                const newData = {
+                    result,
+                    pageInfo
+                }
+                // client.setex(`getuser:${JSON.stringify(request.query)}`, 3600, JSON.stringify(newData))
+                return helper.response(response, 200, "Success Get User", result, pageInfo)
+            } else {
+                return helper.response(response, 404, "User Not Foud", result, pageInfo)
+            }
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
     patchUser: async (request, response) => {
         try {
             const { id } = request.params
@@ -106,6 +179,20 @@ module.exports = {
             if (checkId.length > 0) {
                 const result = await patchUser(setData, id)
                 return helper.response(response, 200, "Users Updated", result)
+            } else {
+                return helper.response(response, 400, `User By Id: ${id} Not Foud`)
+            }
+        } catch (error) {
+            return helper.response(response, 400, "Bad Request", error)
+        }
+    },
+    deleteUser: async (request, response) => {
+        try {
+            const { id } = request.params
+            const checkId = await getUserById(id)
+            if (checkId.length > 0) {
+                const result = await deleteUser(id)
+                return helper.response(response, 201, "User Deleted", result)
             } else {
                 return helper.response(response, 400, `User By Id: ${id} Not Foud`)
             }
