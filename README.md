@@ -85,5 +85,5 @@ IP=127.0.0.1 // IP
 
 **5. Documentation API**
 
-https://web.postman.co/collections/12353337-9b876826-2dc7-4a89-af8e-295fda40512b?version=latest&workspace=e23183f9-0134-41bf-8a77-b51e1037f49e
+https://documenter.getpostman.com/view/12353337/TVRrV4ZP
 
